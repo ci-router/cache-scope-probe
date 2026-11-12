@@ -1,8 +1,3 @@
-// Prints only the {Scope, Permission} pairs of the job's own ACTIONS_RUNTIME_TOKEN `ac` claim,
-// decoded (bit 1 = read, bit 2 = write), plus the non-secret GITHUB_* context of the run.
-// It never prints, logs, writes, uploads or sends the token or any other claim. Only the JWT
-// payload is decoded; the signature is not checked (the token is this job's own, read locally).
-'use strict';
 const { appendFileSync } = require('node:fs');
 
 function fail() {
@@ -48,7 +43,8 @@ try {
   };
   const line = JSON.stringify(result);
   console.log(`PROBE_RESULT ${line}`);
-  if (env.GITHUB_STEP_SUMMARY) appendFileSync(env.GITHUB_STEP_SUMMARY, `\`\`\`json\n${line}\n\`\`\`\n`);
+  if (env.GITHUB_STEP_SUMMARY)
+    appendFileSync(env.GITHUB_STEP_SUMMARY, `\`\`\`json\n${line}\n\`\`\`\n`);
 } catch {
   fail();
 }
