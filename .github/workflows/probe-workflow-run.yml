@@ -1,0 +1,15 @@
+name: probe-workflow-run
+on:
+  workflow_run:
+    workflows: [probe]
+    types: [completed]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./probe
+        with:
+          label: workflow_run

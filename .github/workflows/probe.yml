@@ -1,0 +1,27 @@
+# Throwaway: prints the cache scopes of each event's runtime token. See scripts/cache-scope-probe
+# in up-lab/ci-router. Runs on GitHub-hosted runners because this public repo is outside the product.
+name: probe
+on:
+  push:
+    branches: ['**']
+    tags: ['**']
+  pull_request:
+  pull_request_target:
+  merge_group:
+  release:
+    types: [published]
+  workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./probe
+        with:
+          label: direct
+  reusable:
+    uses: ./.github/workflows/reusable.yml

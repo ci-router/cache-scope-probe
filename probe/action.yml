@@ -1,0 +1,9 @@
+name: cache-scope-probe
+description: Print the cache scopes of this job's own runtime token (ac claim). Prints no token and no other claim.
+inputs:
+  label:
+    description: Free text printed with the result
+    required: false
+runs:
+  using: node20
+  main: main.js
