@@ -1,5 +1,11 @@
 # Throwaway: prints the cache scopes of each event's runtime token. See scripts/cache-scope-probe
 # in up-lab/ci-router. Runs on GitHub-hosted runners because this public repo is outside the product.
+#
+# Trust: the action is pinned by commit SHA and nothing is checked out, so a pull request cannot
+# change what the probe runs. A pull request that edits the workflows or the action is refused by
+# the `guard` job, but that is a safeguard, not a boundary: for `pull_request` GitHub runs the
+# workflow file of the PR's own merge commit, which can drop the guard. The boundary is the
+# maintainer reading the diff before approving a fork run (see README.md in up-lab/ci-router).
 name: probe
 on:
   push:
@@ -15,12 +21,31 @@ on:
 permissions:
   contents: read
 jobs:
+  guard:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Refuse pull requests that touch workflow or action files
+        if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          files=$(gh api "repos/$REPO/pulls/$PR/files" --paginate --jq '.[] | .filename, (.previous_filename // empty)')
+          if printf '%s\n' "$files" | grep -Eq '^(\.github/|probe/)'; then
+            echo "Refusing: this pull request changes .github/ or probe/."
+            exit 1
+          fi
+          echo "ok: no workflow or action file changed"
   probe:
+    needs: guard
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: ./probe
+      - uses: ci-router/cache-scope-probe/probe@6cce4c72749f72b4d73ceb28d71f88e2fe3ee177
         with:
           label: direct
   reusable:
+    needs: guard
     uses: ./.github/workflows/reusable.yml

@@ -7,7 +7,6 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: ./probe
+      - uses: ci-router/cache-scope-probe/probe@6cce4c72749f72b4d73ceb28d71f88e2fe3ee177
         with:
           label: reusable-call
