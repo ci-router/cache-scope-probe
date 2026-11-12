@@ -48,3 +48,4 @@ try {
 } catch {
   fail();
 }
+// touched
