@@ -13,3 +13,4 @@ jobs:
       - uses: ./probe
         with:
           label: workflow_run
+          trigger: ${{ github.event.workflow_run.event }}

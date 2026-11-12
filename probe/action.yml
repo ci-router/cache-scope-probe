@@ -4,6 +4,9 @@ inputs:
   label:
     description: Free text printed with the result
     required: false
+  trigger:
+    description: Free text, the event of the workflow a workflow_run follows
+    required: false
 runs:
   using: node20
   main: main.js

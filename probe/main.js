@@ -36,6 +36,7 @@ try {
   const env = process.env;
   const result = {
     label: env.INPUT_LABEL ?? '',
+    trigger: env.INPUT_TRIGGER || null,
     event: env.GITHUB_EVENT_NAME,
     ref: env.GITHUB_REF,
     refType: env.GITHUB_REF_TYPE,
